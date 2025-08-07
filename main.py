@@ -1,52 +1,33 @@
-from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
-from tennis import match
+from flask import Flask
+from uuid import uuid4, UUID
+
+app = Flask(__name__)
 
 
-app = FastAPI()
-
-dummy_db = [
-    match.TennisMatch(
-        "Govert Jan",
-        "Nicolien",
-        {
-            "num_games_to_win": 6,
-            "best_of_num_sets": 3,
-            "whos_serve": "Govert Jan",
-            "with_AD": True,
-        },
-    ),
-    match.TennisMatch(
-        "Jan",
-        "Piet",
-        {
-            "num_games_to_win": 6,
-            "best_of_num_sets": 3,
-            "whos_serve": "Govert Jan",
-            "with_AD": True,
-        },
-    ),
-]
+@app.route("/", methods=["GET", "POST"])
+def home():
+    return "Welcome to the Tennis App!"
 
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Tennis Match API!"}
+@app.route("/matches", methods=["GET"])
+def matches():
+    return "List of tennis matches will be displayed here."
 
 
-@app.get("/matches")
-async def get_matches():
-    return jsonable_encoder(dummy_db)
+@app.route("/matches/<uuid:id>", methods=["GET"])
+def match_detail(id: UUID):
+    return f"Details of match with UUID {id} will be displayed here."
 
 
-@app.get("/matches/{match_id}")
-async def get_match(match_id: int):
-    if 0 <= match_id < len(dummy_db):
-        return jsonable_encoder(dummy_db[match_id])
-    return {"error": "Match not found"}
+@app.route("/matches/<uuid:id>/viewer", methods=["GET"])
+def match_viewer(id: UUID):
+    return f"Viewer for match with UUID {id} will be displayed here."
+
+
+@app.route("/matches/<uuid:id>/edit", methods=["GET", "POST"])
+def match_edit(id: UUID):
+    return f"Edit form for match with UUID {id} will be displayed here."
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    app.run(debug=True)
