@@ -41,18 +41,18 @@ async def get_all_matches() -> dict[int, dict[str, Any]]:
 
 
 @app.get("/matches/{match_id}")
-async def get_match(match_id: int):
+async def get_match(match_id: int) -> dict[str, Any]:
     if match_id not in matches:
         raise HTTPException(status_code=404, detail="Match does not exist")
     return matches[match_id].get_all_info()
 
 
 @app.post("/matches/{match_id}/point")
-async def make_point(match_id: int, point: PointRequest):
+async def make_point(match_id: int, point: PointRequest) -> dict[str, Any]:
     if match_id not in matches:
         raise HTTPException(status_code=404, detail="Match does not exist")
 
-    match = matches[match_id]
+    match: TennisMatch = matches[match_id]
 
     # Validatie speler
     if point.player not in [match.player1, match.player2]:
@@ -80,5 +80,5 @@ async def get_score(match_id: int) -> MatchScore:
     if match_id not in matches:
         raise HTTPException(status_code=404, detail="Match does not exist")
 
-    match = matches[match_id]
+    match: TennisMatch = matches[match_id]
     return MatchScore(game=match.gameScore, sets=match.setScore, match=match.matchScore)
