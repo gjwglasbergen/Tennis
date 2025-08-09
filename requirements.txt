@@ -1,5 +1,6 @@
 fastapi
-redis
-types-redis
 uvicorn
+sqlalchemy
+databases
 pydantic
+tennis
